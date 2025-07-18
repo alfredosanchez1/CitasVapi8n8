@@ -240,34 +240,37 @@ async def process_telnyx_form_webhook(form_data):
         print(f"   CallSid: {call_sid}")
         print(f"   CallerId: {caller_id}")
         
-        # Usar Gather con speech recognition para conversación interactiva
+        # Usar Gather con DTMF para conversación interactiva (compatible con trial)
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Say voice="alice" language="es-MX">
         Bienvenido al consultorio del Dr. Xavier Xijemez Xifra. 
-        Soy su asistente virtual. ¿En qué puedo ayudarle hoy?
+        Soy su asistente virtual. 
         
-        Puede decirme si desea agendar una cita, consultar horarios, 
-        información sobre ubicación, o cualquier otra consulta.
+        Para ayudarle mejor, presione:
+        1 - Para agendar una cita
+        2 - Para consultar horarios
+        3 - Para información sobre ubicación
+        4 - Para información sobre preparación de la consulta
+        5 - Para hablar con un operador
         
-        Por favor, dígame su nombre y el motivo de su consulta.
+        Por favor, presione el número correspondiente.
     </Say>
     
     <Gather 
-        input="speech" 
+        input="dtmf" 
         timeout="10" 
-        speechTimeout="auto"
-        language="es-MX"
-        action="https://web-production-a2b02.up.railway.app/process-speech?call_sid={call_sid}&from={from_number}"
+        numDigits="1"
+        action="https://web-production-a2b02.up.railway.app/process-dtmf?call_sid={call_sid}&from={from_number}"
         method="POST">
         
         <Say voice="alice" language="es-MX">
-            Estoy escuchando...
+            Por favor, presione un número del 1 al 5.
         </Say>
     </Gather>
     
     <Say voice="alice" language="es-MX">
-        No pude escuchar su respuesta. Por favor, llame nuevamente.
+        No recibí su selección. Por favor, llame nuevamente.
     </Say>
     
     <Hangup/>
@@ -524,6 +527,124 @@ async def process_speech(request: Request):
 </Response>"""
         return Response(content=error_response, media_type="application/xml")
 
+@app.post("/process-dtmf")
+async def process_dtmf(request: Request):
+    """Procesar DTMF (teclas presionadas) de Telnyx Gather"""
+    try:
+        print(f"🔢 Procesando DTMF request...")
+        
+        # Obtener parámetros de la URL
+        call_sid = request.query_params.get("call_sid", "")
+        from_number = request.query_params.get("from", "")
+        
+        print(f"📞 Parámetros: call_sid={call_sid}, from={from_number}")
+        
+        # Obtener datos del formulario
+        form_data = await request.form()
+        print(f"📝 Form data keys: {list(form_data.keys())}")
+        
+        digits = form_data.get("Digits", "")
+        
+        print(f"🔢 Dígito presionado: {digits}")
+        
+        # Procesar la selección del usuario
+        response_text = await handle_dtmf_selection(digits, call_sid, from_number)
+        
+        # Devolver TeXML con la respuesta
+        texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="alice" language="es-MX">
+        {response_text}
+    </Say>
+    
+    <Gather 
+        input="dtmf" 
+        timeout="10" 
+        numDigits="1"
+        action="https://web-production-a2b02.up.railway.app/process-dtmf?call_sid={call_sid}&from={from_number}"
+        method="POST">
+        
+        <Say voice="alice" language="es-MX">
+            Para continuar, presione:
+            1 - Para agendar una cita
+            2 - Para consultar horarios
+            3 - Para información sobre ubicación
+            4 - Para información sobre preparación
+            5 - Para hablar con un operador
+            0 - Para terminar la llamada
+        </Say>
+    </Gather>
+    
+    <Say voice="alice" language="es-MX">
+        Gracias por llamar al consultorio del Dr. Xavier Xijemez Xifra. 
+        Que tenga un excelente día.
+    </Say>
+    
+    <Hangup/>
+</Response>"""
+        
+        print(f"✅ Respuesta TeXML generada exitosamente")
+        return Response(content=texml_response, media_type="application/xml")
+        
+    except Exception as e:
+        print(f"❌ Error procesando DTMF: {e}")
+        import traceback
+        print(f"❌ Traceback: {traceback.format_exc()}")
+        
+        # Devolver respuesta de error simple
+        error_response = """<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="alice" language="es-MX">
+        Lo siento, hubo un error procesando su selección. 
+        Por favor, llame nuevamente.
+    </Say>
+    <Hangup/>
+</Response>"""
+        return Response(content=error_response, media_type="application/xml")
+
+async def handle_dtmf_selection(digits: str, call_sid: str, from_number: str):
+    """Manejar selección DTMF del usuario"""
+    try:
+        print(f"🔢 Procesando selección: {digits}")
+        
+        if digits == "1":
+            return await handle_appointment_dtmf(call_sid, from_number)
+        elif digits == "2":
+            return handle_schedule_inquiry()
+        elif digits == "3":
+            return handle_location_inquiry()
+        elif digits == "4":
+            return handle_preparation_inquiry()
+        elif digits == "5":
+            return handle_operator_request()
+        elif digits == "0":
+            return "Gracias por llamar. Que tenga un excelente día."
+        else:
+            return "Opción no válida. Por favor, seleccione una opción del 1 al 5."
+            
+    except Exception as e:
+        print(f"❌ Error procesando selección DTMF: {e}")
+        return "Lo siento, hubo un error procesando su selección."
+
+async def handle_appointment_dtmf(call_sid: str, from_number: str):
+    """Manejar solicitud de cita por DTMF"""
+    print(f"📅 Usuario seleccionó agendar cita")
+    return """Para agendar una cita, necesito recopilar su información.
+    
+    Por favor, tenga a mano:
+    - Su nombre completo
+    - Número de teléfono
+    - Motivo de la consulta
+    
+    Un miembro de nuestro equipo se pondrá en contacto con usted 
+    para confirmar los detalles y la fecha disponible."""
+
+def handle_operator_request():
+    """Manejar solicitud de operador"""
+    return """Entiendo que desea hablar con un operador.
+    Por favor, espere un momento mientras lo conecto.
+    Si no hay operadores disponibles, le devolveremos la llamada."""
+
 async def generate_conversation_response(speech_text: str, call_sid: str, from_number: str):
     """Generar respuesta conversacional basada en el speech del usuario"""
     try:
@@ -553,11 +674,8 @@ async def generate_conversation_response(speech_text: str, call_sid: str, from_n
         return "Lo siento, no pude procesar su solicitud. ¿Podrías repetir?"
 
 async def handle_appointment_request(speech_text: str, call_sid: str, from_number: str):
-    """Manejar solicitud de cita"""
+    """Manejar solicitud de cita (mantener para compatibilidad)"""
     print(f"📅 Usuario quiere agendar cita: {speech_text}")
-    
-    # Aquí podrías integrar con OpenAI para extraer información
-    # Por ahora usamos lógica simple
     
     if "nombre" in speech_text.lower() and "motivo" in speech_text.lower():
         return """Perfecto, he tomado nota de su información para la cita. 
