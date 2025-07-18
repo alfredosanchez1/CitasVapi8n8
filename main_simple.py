@@ -67,11 +67,19 @@ async def telnyx_webhook(request: Request):
                 print(f"   Hacia: {to_number}")
                 print(f"   CallSid: {call_sid}")
                 
-                # Respuesta simple de TeXML
+                # Respuesta inteligente con OpenAI
+                try:
+                    from ai_conversation_enhanced import enhanced_ai_manager
+                    conversation_response = await enhanced_ai_manager.generate_response(from_number)
+                    print(f"🤖 Respuesta AI generada: {conversation_response}")
+                except Exception as e:
+                    print(f"❌ Error con AI manager: {e}")
+                    conversation_response = "¡Hola! Bienvenido al Consultorio del Dr. Xavier Xijemez Xifra, especialista en Medicina Interna. Un miembro de nuestro equipo se pondrá en contacto con usted pronto. Gracias por llamar."
+                
                 texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Say voice="alice" language="es-MX">
-        ¡Hola! Bienvenido al Consultorio del Dr. Xavier Xijemez Xifra. Un miembro de nuestro equipo se pondrá en contacto con usted pronto. Gracias por llamar.
+        {conversation_response}
     </Say>
     <Hangup/>
 </Response>"""
