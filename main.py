@@ -258,7 +258,7 @@ async def process_telnyx_form_webhook(form_data):
         timeout="10" 
         speechTimeout="auto"
         language="es-MX"
-        action="https://tu-railway-app.railway.app/process-speech?call_sid={call_sid}&from={from_number}"
+        action="https://web-production-a2b02.up.railway.app/process-speech?call_sid={call_sid}&from={from_number}"
         method="POST">
         
         <Say voice="alice" language="es-MX">
@@ -476,7 +476,7 @@ async def process_speech(request: Request):
         timeout="10" 
         speechTimeout="auto"
         language="es-MX"
-        action="https://tu-railway-app.railway.app/process-speech?call_sid={call_sid}&from={from_number}"
+        action="https://web-production-a2b02.up.railway.app/process-speech?call_sid={call_sid}&from={from_number}"
         method="POST">
         
         <Say voice="alice" language="es-MX">
