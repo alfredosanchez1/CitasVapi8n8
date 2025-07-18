@@ -8,19 +8,26 @@ from typing import Optional, Dict, Any
 import requests
 
 # Importar nuestros nuevos módulos (opcional)
+AI_AVAILABLE = False
+ai_manager = None
+CALENDAR_AVAILABLE = False
+calendar_manager = None
+
 try:
     from ai_conversation import ai_manager
     AI_AVAILABLE = True
-except ImportError:
-    print("⚠️  ADVERTENCIA: ai_conversation no disponible. Usando respuestas de respaldo.")
+    print("✅ AI manager cargado correctamente")
+except ImportError as e:
+    print(f"⚠️  ADVERTENCIA: ai_conversation no disponible: {e}. Usando respuestas de respaldo.")
     AI_AVAILABLE = False
     ai_manager = None
 
 try:
     from google_calendar_manager import calendar_manager
     CALENDAR_AVAILABLE = True
-except ImportError:
-    print("⚠️  ADVERTENCIA: google_calendar_manager no disponible. Usando sistema simulado.")
+    print("✅ Calendar manager cargado correctamente")
+except ImportError as e:
+    print(f"⚠️  ADVERTENCIA: google_calendar_manager no disponible: {e}. Usando sistema simulado.")
     CALENDAR_AVAILABLE = False
     calendar_manager = None
 
