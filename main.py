@@ -7,10 +7,14 @@ import json
 from typing import Optional, Dict, Any
 import requests
 
+# Importar nuestros nuevos módulos
+from ai_conversation import ai_manager
+from google_calendar_manager import calendar_manager
+
 # Cargar variables de entorno
 load_dotenv()
 
-app = FastAPI(title="Consultorio Médico Vapi Integration", version="1.0.0")
+app = FastAPI(title="Consultorio Médico Vapi Integration", version="2.0.0")
 
 # Configuración
 VAPI_API_KEY = os.getenv("VAPI_API_KEY")
@@ -21,11 +25,23 @@ VAPI_ASSISTANT_ID = os.getenv("VAPI_ASSISTANT_ID")
 TELNYX_API_KEY = os.getenv("TELNYX_API_KEY")
 TELNYX_PHONE_NUMBER = "+526624920537"
 
+# Verificar variables de entorno críticas
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    print("⚠️  ADVERTENCIA: OPENAI_API_KEY no configurada. El sistema funcionará con respuestas de respaldo.")
+
 # Modelos de datos
 class CallRequest(BaseModel):
     phone_number: str
     patient_name: Optional[str] = None
     reason: Optional[str] = None
+
+class AppointmentRequest(BaseModel):
+    patient_name: str
+    phone: str
+    reason: str
+    preferred_date: Optional[str] = None
+    preferred_time: Optional[str] = None
 
 class VapiWebhook(BaseModel):
     type: str
@@ -242,7 +258,7 @@ async def process_telnyx_form_webhook(form_data):
         
         # Sistema conversacional con IA (simulado para cuentas trial)
         # En lugar de Gather, usamos un flujo de conversación simple
-        conversation_response = await generate_ai_conversation_response(call_sid, from_number)
+        conversation_response = await ai_manager.generate_ai_conversation_response(call_sid, from_number)
         
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -455,11 +471,11 @@ async def process_speech(request: Request):
             o información sobre ubicación."""
         else:
             # Procesar el speech con lógica de conversación
-            response_text = await generate_conversation_response(speech_result, call_sid, from_number)
+            response_text = await ai_manager.generate_conversation_response(speech_result, call_sid, from_number)
         
         # Sistema conversacional con IA (simulado para cuentas trial)
         # En lugar de Gather, usamos un flujo de conversación simple
-        conversation_response = await generate_ai_conversation_response(call_sid, from_number)
+        conversation_response = await ai_manager.generate_ai_conversation_response(call_sid, from_number)
         
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -695,7 +711,7 @@ async def generate_ai_conversation_response(call_sid: str, from_number: str):
         
         # Crear un contexto de conversación basado en el número de teléfono
         # Esto simula recordar conversaciones previas
-        conversation_context = get_conversation_context(from_number)
+        conversation_context = ai_manager.get_conversation_context(from_number)
         
         # Generar respuesta basada en el contexto
         if conversation_context["step"] == 0:
@@ -750,7 +766,7 @@ async def generate_ai_conversation_response(call_sid: str, from_number: str):
             Que tenga un excelente día y cuide su salud."""
         
         # Actualizar el contexto para la próxima llamada
-        update_conversation_context(from_number, conversation_context["step"] + 1)
+        ai_manager.update_conversation_context(from_number, conversation_context["step"] + 1)
         
         return response
         
@@ -773,3 +789,104 @@ def update_conversation_context(phone_number: str, step: int):
     if phone_number not in conversation_contexts:
         conversation_contexts[phone_number] = {"step": 0, "data": {}}
     conversation_contexts[phone_number]["step"] = step 
+
+@app.post("/create-appointment")
+async def create_appointment(appointment: AppointmentRequest):
+    """Crear una cita usando Google Calendar"""
+    try:
+        # Extraer información de la cita
+        appointment_data = {
+            'nombre': appointment.patient_name,
+            'telefono': appointment.phone,
+            'motivo': appointment.reason,
+            'fecha': appointment.preferred_date,
+            'hora': appointment.preferred_time
+        }
+        
+        # Si no hay fecha preferida, obtener la próxima disponible
+        if not appointment_data['fecha']:
+            appointment_data['fecha'] = calendar_manager.get_next_available_date()
+        
+        # Si no hay hora preferida, usar la primera disponible
+        if not appointment_data['hora']:
+            available_slots = calendar_manager.get_available_slots(appointment_data['fecha'])
+            if available_slots:
+                appointment_data['hora'] = available_slots[0]['start_time']
+            else:
+                appointment_data['hora'] = '10:00'
+        
+        # Crear la cita en Google Calendar
+        result = calendar_manager.create_appointment(appointment_data)
+        
+        if result['success']:
+            return {
+                "success": True,
+                "message": "Cita creada exitosamente",
+                "appointment": {
+                    "id": result['event_id'],
+                    "patient_name": appointment.patient_name,
+                    "phone": appointment.phone,
+                    "reason": appointment.reason,
+                    "date": appointment_data['fecha'],
+                    "time": appointment_data['hora'],
+                    "calendar_link": result['event_link']
+                }
+            }
+        else:
+            raise HTTPException(status_code=500, detail=result['error'])
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/available-slots/{date}")
+async def get_available_slots(date: str):
+    """Obtener horarios disponibles para una fecha específica"""
+    try:
+        slots = calendar_manager.get_available_slots(date)
+        return {
+            "date": date,
+            "available_slots": slots,
+            "total_slots": len(slots)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/appointments/{date}")
+async def get_appointments_for_date(date: str):
+    """Obtener todas las citas para una fecha específica"""
+    try:
+        appointments = calendar_manager.get_appointments_for_date(date)
+        return {
+            "date": date,
+            "appointments": appointments,
+            "total_appointments": len(appointments)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/appointments/{event_id}")
+async def cancel_appointment(event_id: str):
+    """Cancelar una cita"""
+    try:
+        result = calendar_manager.cancel_appointment(event_id)
+        if result['success']:
+            return {"success": True, "message": "Cita cancelada exitosamente"}
+        else:
+            raise HTTPException(status_code=500, detail=result['error'])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/next-available-date")
+async def get_next_available_date():
+    """Obtener la próxima fecha disponible"""
+    try:
+        next_date = calendar_manager.get_next_available_date()
+        available_slots = calendar_manager.get_available_slots(next_date)
+        
+        return {
+            "next_available_date": next_date,
+            "available_slots": available_slots,
+            "total_slots": len(available_slots)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) 
