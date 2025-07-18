@@ -2,10 +2,13 @@
 nixPkgs = ["python39", "python39Packages.pip"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = ["pip install --break-system-packages -r requirements.txt"]
 
 [phases.build]
-cmds = ["echo 'Build completed'"]
+cmds = ["echo 'Python build completed with nixpacks.toml'"]
 
 [start]
-cmd = "python main.py" 
+cmd = "./start.sh"
+
+[variables]
+NIXPACKS_PYTHON_VERSION = "3.9" 

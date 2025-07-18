@@ -1,0 +1,155 @@
+# BASE DE CONOCIMIENTO - PREGUNTAS FRECUENTES
+
+## CONSULTORIO DE MEDICINA INTERNA
+
+### INFORMACIÓN GENERAL DEL CONSULTORIO
+
+**P: ¿Cuáles son los horarios de atención?**
+
+R: Nuestros horarios son de lunes a viernes de [HORA] a [HORA]. Los sábados atendemos de [HORA] a [HORA]. Los domingos el consultorio permanece cerrado.
+
+**P: ¿Dónde está ubicado el consultorio?**
+
+R: Estamos ubicados en [DIRECCIÓN COMPLETA]. Contamos con estacionamiento disponible y acceso para personas con movilidad reducida.
+
+**P: ¿Qué obras sociales aceptan?**
+
+R: Trabajamos con [LISTAR OBRAS SOCIALES]. También atendemos pacientes particulares. Para verificar su cobertura, puede proporcionarme el nombre de su obra social.
+
+**P: ¿El doctor está disponible para urgencias fuera del horario?**
+
+R: Para emergencias médicas, recomendamos acudir inmediatamente al servicio de urgencias más cercano. El doctor no atiende urgencias fuera del horario de consultorio.
+
+### RESERVA DE CITAS
+
+**P: ¿Cómo puedo sacar una cita?**
+
+R: Puede reservar su cita llamando a este número, y yo le ayudo a encontrar el horario que mejor le convenga. También necesitaré algunos datos básicos para el agendamiento.
+
+**P: ¿Cuánto tiempo de anticipación necesito para conseguir una cita?**
+
+R: Por lo general, tenemos disponibilidad dentro de los próximos [X] días para consultas de rutina. Para casos más urgentes, podemos acomodar citas con menor anticipación.
+
+**P: ¿Puedo reprogramar o cancelar mi cita?**
+
+R: Sí, puede cancelar o reprogramar su cita llamando con al menos 24 horas de anticipación. Esto nos ayuda a ofrecer ese horario a otros pacientes.
+
+**P: ¿Qué pasa si llego tarde a mi cita?**
+
+R: Le pedimos puntualidad para no afectar a otros pacientes. Si llega con más de 15 minutos de retraso, podríamos necesitar reprogramar su cita según la disponibilidad.
+
+**P: ¿Cuánto dura una consulta?**
+
+R: Las consultas de primera vez suelen durar entre 45-60 minutos. Las consultas de seguimiento generalmente toman 30 minutos.
+
+### PREPARACIÓN PARA LA CONSULTA
+
+**P: ¿Qué documentos debo traer?**
+
+R: Para la primera consulta traiga: documento de identidad, carnet de obra social, estudios médicos previos, lista de medicamentos actuales y resumen de su historia clínica si tiene.
+
+**P: ¿Necesito hacer alguna preparación especial?**
+
+R: Depende del motivo de su consulta. Para consultas de rutina no necesita preparación especial. Si requiere análisis de laboratorio, le indicaremos las instrucciones específicas.
+
+**P: ¿Puedo comer antes de la consulta?**
+
+R: Puede comer normalmente antes de la consulta, a menos que tenga programados análisis de laboratorio que requieran ayuno. En ese caso, le informaremos previamente.
+
+**P: ¿Debo suspender mis medicamentos antes de la consulta?**
+
+R: No suspenda ningún medicamento sin consultar primero. Traiga la lista completa de sus medicamentos actuales para que el doctor pueda evaluarlos.
+
+### SOBRE MEDICINA INTERNA
+
+**P: ¿Qué es un médico internista?**
+
+R: Un médico internista es especialista en medicina interna, se dedica al diagnóstico y tratamiento de enfermedades en adultos, especialmente condiciones complejas que afectan múltiples sistemas del cuerpo.
+
+**P: ¿Qué tipo de problemas trata un internista?**
+
+R: Los internistas tratan diabetes, hipertensión, enfermedades cardiovasculares, problemas respiratorios, trastornos endocrinos, enfermedades renales, y coordinan el cuidado integral del paciente adulto.
+
+**P: ¿Necesito derivación de otro médico?**
+
+R: No necesariamente. Puede consultar directamente, aunque si viene derivado por otro profesional, traiga la interconsulta correspondiente.
+
+### CONSULTAS ESPECÍFICAS
+
+**P: ¿Atienden pacientes diabéticos?**
+
+R: Sí, el Dr. Dr. Xavier Xijemez Xifra tiene amplia experiencia en el manejo de diabetes y otras enfermedades endocrinas. Ofrecemos seguimiento y educación para el control de la diabetes.
+
+**P: ¿Hacen control de presión arterial?**
+
+R: Sí, realizamos evaluación y seguimiento de hipertensión arterial, incluyendo ajuste de medicación y recomendaciones de estilo de vida.
+
+**P: ¿Puedo consultar por múltiples problemas en una sola cita?**
+
+R: Sí, puede consultar por varios problemas. Le recomiendo hacer una lista previa para aprovechar mejor el tiempo de consulta.
+
+### ESTUDIOS Y ANÁLISIS
+
+**P: ¿Realizan análisis de laboratorio en el consultorio?**
+
+R: No realizamos análisis en el consultorio, pero trabajamos con laboratorios de confianza. El doctor le indicará dónde realizarse los estudios necesarios.
+
+**P: ¿Cuándo estarán listos mis resultados?**
+
+R: Los tiempos dependen del tipo de estudio. Los análisis de rutina suelen estar en 24-48 horas. El doctor le explicará los tiempos específicos para cada estudio.
+
+**P: ¿El doctor me explica los resultados?**
+
+R: Sí, el Dr. Xavier Xijemez Xifra revisa todos los resultados con sus pacientes y explica su significado en términos comprensibles.
+
+### PAGOS Y FACTURACIÓN
+
+**P: ¿Cuáles son los valores de las consultas?**
+
+R: Los valores varían según si tiene obra social o es paciente particular. Le puedo proporcionar la información específica según su situación.
+
+**P: ¿Qué formas de pago aceptan?**
+
+R: Aceptamos efectivo, tarjetas de débito y crédito, y transferencias bancarias. También facturamos directamente a las obras sociales que tenemos convenio.
+
+**P: ¿Entregan factura?**
+
+R: Sí, entregamos todas las facturas correspondientes tanto para obras sociales como para pacientes particulares.
+
+### SEGUIMIENTO Y CONTROLES
+
+**P: ¿Con qué frecuencia debo hacer controles?**
+
+R: La frecuencia depende de su condición específica. El doctor establecerá un plan de seguimiento personalizado durante su consulta.
+
+**P: ¿Puedo contactar al doctor entre consultas?**
+
+R: Para consultas menores puede llamar al consultorio. Para situaciones urgentes, recomendamos la consulta directa o acudir a emergencias.
+
+**P: ¿Hacen recordatorios de citas?**
+
+R: Sí, intentamos contactar a los pacientes el día anterior para recordar su cita. Asegúrese de que tengamos su número actualizado.
+
+### CASOS ESPECIALES
+
+**P: ¿Atienden adultos mayores?**
+
+R: Sí, tenemos amplia experiencia en el cuidado de adultos mayores y las condiciones médicas más frecuentes en esta edad.
+
+**P: ¿Qué hago si me siento mal antes de mi cita programada?**
+
+R: Si presenta síntomas preocupantes, no espere hasta su cita. Llame al consultorio para evaluar si necesita atención más temprana o acudir a emergencias.
+
+**P: ¿Pueden coordinar con otros especialistas?**
+
+R: Sí, el Dr. Xavier Xijemez Xifra puede derivarlo a otros especialistas cuando sea necesario y coordinar su atención integral.
+
+### EMERGENCIAS
+
+**P: ¿Qué hago en caso de emergencia?**
+
+R: Para emergencias médicas, acuda inmediatamente al servicio de urgencias más cercano o llame al servicio de emergencias. No espere hasta el horario de consultorio.
+
+**P: ¿El doctor atiende emergencias a domicilio?**
+
+R: No ofrecemos atención domiciliaria de emergencias. Para estas situaciones, debe acudir a un servicio de urgencias o llamar a emergencias médicas.

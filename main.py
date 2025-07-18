@@ -49,6 +49,11 @@ KNOWLEDGE_BASE = {
 async def root():
     return {"message": "API del Consultorio Médico - Dr. Xavier Xijemez Xifra - Railway Deploy v1.0"}
 
+@app.get("/test")
+async def test():
+    """Endpoint de prueba simple"""
+    return {"message": "Test endpoint working"}
+
 @app.post("/create-call")
 async def create_call(call_request: CallRequest):
     """Crear una llamada usando Vapi"""
@@ -167,28 +172,32 @@ async def get_appointments():
 @app.get("/health")
 async def health_check():
     """Verificar estado del servidor"""
-    return {"status": "healthy", "timestamp": "2024-01-01T00:00:00Z"}
+    return {"status": "healthy"}
 
 @app.post("/telnyx-webhook")
 async def telnyx_webhook(request: Request):
     """Webhook para recibir eventos de Telnyx"""
     try:
         body = await request.json()
-        print(f"📞 Telnyx webhook recibido: {body}")
+        print(f"📞 Telnyx webhook recibido: {json.dumps(body, indent=2)}")
         
         # Procesar diferentes tipos de eventos de Telnyx
         event_type = body.get("data", {}).get("event_type")
+        print(f"🎯 Evento detectado: {event_type}")
         
         if event_type == "call.initiated":
             # Llamada iniciada
+            print("📱 Llamada iniciada")
             return {"status": "processed", "message": "Call initiated"}
             
         elif event_type == "call.answered":
             # Llamada contestada
+            print("✅ Llamada contestada")
             return {"status": "processed", "message": "Call answered"}
             
         elif event_type == "call.hangup":
             # Llamada terminada
+            print("📴 Llamada terminada")
             return {"status": "processed", "message": "Call ended"}
             
         elif event_type == "call.speech.gathered":
@@ -198,6 +207,7 @@ async def telnyx_webhook(request: Request):
             
             # Aquí procesarías el speech con IA
             response = await process_speech_with_ai(speech_text)
+            print(f"🤖 Respuesta IA: {response}")
             
             return {
                 "status": "processed", 
@@ -206,6 +216,7 @@ async def telnyx_webhook(request: Request):
             }
             
         else:
+            print(f"❓ Evento desconocido: {event_type}")
             return {"status": "ignored", "message": f"Unknown event type: {event_type}"}
             
     except Exception as e:

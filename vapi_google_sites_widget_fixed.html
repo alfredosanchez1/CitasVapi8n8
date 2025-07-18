@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultorio Médico - Asistente Virtual</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        .phone-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .call-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .call-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .call-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            color: #333;
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .info-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .doctor-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .doctor-info h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .doctor-info p {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+
+        .security-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏥</div>
+        <h1>Consultorio Médico</h1>
+        <p class="subtitle">Dr. Xavier Xijemez Xifra - Medicina Interna</p>
+        
+        <div class="doctor-info">
+            <h3>👨‍⚕️ Dr. Xavier Xijemez Xifra</h3>
+            <p>📋 Especialista en Medicina Interna</p>
+            <p>🏆 Más de 5,000 consultas realizadas</p>
+            <p>🎓 UNAM - Hospital General de México</p>
+        </div>
+
+        <div class="info-box">
+            <h3>📞 ¿Cómo funciona?</h3>
+            <ul>
+                <li>Ingresa tu número de teléfono</li>
+                <li>Presiona "Llamar al Asistente"</li>
+                <li>Recibirás una llamada automática</li>
+                <li>Karla te ayudará con tus consultas</li>
+            </ul>
+        </div>
+
+        <input 
+            type="tel" 
+            id="phoneInput" 
+            class="phone-input" 
+            placeholder="📱 Tu número de teléfono (ej: +1234567890)"
+            maxlength="20"
+        >
+        
+        <button id="callButton" class="call-button" onclick="initiateCall()">
+            📞 Llamar al Asistente Karla
+        </button>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Iniciando llamada...</p>
+        </div>
+
+        <div id="status" class="status" style="display: none;"></div>
+
+        <div class="security-notice">
+            <strong>🔒 Seguridad:</strong> Tu información está protegida. Solo usamos tu número para la llamada.
+        </div>
+    </div>
+
+    <script>
+        // Datos de Vapi (API key pública)
+        const VAPI_PUBLIC_KEY = "f4ee5b98-ecad-46ed-9f08-a7a598d9652e";
+        const VAPI_ASSISTANT_ID = "37431832-940f-4c90-b769-8f8e5bd1cc2a";
+        const VAPI_PHONE_ID = "7f3b9939-d9e9-4dbe-afa7-491b6cdb0a49";
+        const VAPI_BASE_URL = "https://api.vapi.ai";
+
+        // Elementos del DOM
+        const phoneInput = document.getElementById('phoneInput');
+        const callButton = document.getElementById('callButton');
+        const loading = document.getElementById('loading');
+        const status = document.getElementById('status');
+
+        // Validar formato de teléfono
+        function validatePhone(phone) {
+            const phoneRegex = /^\+[1-9]\d{1,14}$/;
+            return phoneRegex.test(phone);
+        }
+
+        // Mostrar estado
+        function showStatus(message, type = 'info') {
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+
+        // Ocultar estado
+        function hideStatus() {
+            status.style.display = 'none';
+        }
+
+        // Crear llamada con Vapi (API key pública)
+        async function createVapiCall(phoneNumber) {
+            try {
+                const payload = {
+                    phoneNumberId: VAPI_PHONE_ID,
+                    assistantId: VAPI_ASSISTANT_ID,
+                    customer: {
+                        number: phoneNumber
+                    },
+                    metadata: {
+                        source: "google_sites_widget",
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    }
+                };
+
+                console.log('🚀 Creando llamada con payload:', payload);
+
+                const response = await fetch(`${VAPI_BASE_URL}/call`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${VAPI_PUBLIC_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                console.log('📡 Response status:', response.status);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Llamada creada:', result);
+                    return { success: true, data: result };
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Error response:', errorText);
+                    return { success: false, error: `Error ${response.status}: ${errorText}` };
+                }
+            } catch (error) {
+                console.error('💥 Exception:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Función principal para iniciar llamada
+        async function initiateCall() {
+            const phoneNumber = phoneInput.value.trim();
+            
+            // Validar número de teléfono
+            if (!phoneNumber) {
+                showStatus('❌ Por favor ingresa tu número de teléfono', 'error');
+                return;
+            }
+
+            if (!validatePhone(phoneNumber)) {
+                showStatus('❌ Formato incorrecto. Usa formato internacional (ej: +1234567890)', 'error');
+                return;
+            }
+
+            // Deshabilitar botón y mostrar loading
+            callButton.disabled = true;
+            callButton.textContent = '⏳ Iniciando...';
+            loading.style.display = 'block';
+            hideStatus();
+
+            try {
+                // Crear llamada
+                const result = await createVapiCall(phoneNumber);
+                
+                if (result.success) {
+                    showStatus(`✅ ¡Llamada iniciada! Recibirás una llamada en ${phoneNumber}`, 'success');
+                    phoneInput.value = '';
+                    
+                    // Mostrar información adicional
+                    setTimeout(() => {
+                        showStatus('📞 Karla te llamará en unos segundos. ¡Responde tu teléfono!', 'info');
+                    }, 2000);
+                } else {
+                    showStatus(`❌ Error: ${result.error}`, 'error');
+                    
+                    // Si es error 401, explicar el problema
+                    if (result.error.includes('401')) {
+                        setTimeout(() => {
+                            showStatus('💡 Tip: Verifica que el assistant Karla esté activo en Vapi', 'info');
+                        }, 3000);
+                    }
+                }
+            } catch (error) {
+                showStatus(`❌ Error inesperado: ${error.message}`, 'error');
+            } finally {
+                // Restaurar botón y ocultar loading
+                callButton.disabled = false;
+                callButton.textContent = '📞 Llamar al Asistente Karla';
+                loading.style.display = 'none';
+            }
+        }
+
+        // Permitir Enter para iniciar llamada
+        phoneInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                initiateCall();
+            }
+        });
+
+        // Validación en tiempo real
+        phoneInput.addEventListener('input', function() {
+            const phone = this.value.trim();
+            if (phone && !validatePhone(phone)) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = '#e1e5e9';
+            }
+        });
+
+        // Mostrar mensaje de bienvenida
+        setTimeout(() => {
+            showStatus('👋 ¡Bienvenido! Ingresa tu número para hablar con Karla', 'info');
+        }, 1000);
+
+        // Log para debugging
+        console.log('🏥 Widget cargado con configuración:');
+        console.log('- Assistant ID:', VAPI_ASSISTANT_ID);
+        console.log('- Phone ID:', VAPI_PHONE_ID);
+        console.log('- API Key:', VAPI_PUBLIC_KEY.substring(0, 8) + '...');
+    </script>
+</body>
+</html> 

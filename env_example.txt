@@ -1,0 +1,18 @@
+# Configuración de Vapi
+VAPI_API_KEY=tu_api_key_de_vapi_aqui
+VAPI_PHONE_NUMBER_ID=tu_phone_number_id_aqui
+VAPI_ASSISTANT_ID=tu_assistant_id_aqui
+
+# Configuración de Telnyx
+TELNYX_API_KEY=tu_api_key_de_telnyx_aqui
+TELNYX_PHONE_NUMBER=+526624920537
+
+# Configuración del servidor
+PORT=8000
+HOST=0.0.0.0
+
+# Base de datos (opcional)
+DATABASE_URL=postgresql://user:password@localhost/dbname
+
+# 8n8 Webhook URL (opcional)
+N8N_WEBHOOK_URL=https://tu-instancia-8n8.com/webhook/citas 
