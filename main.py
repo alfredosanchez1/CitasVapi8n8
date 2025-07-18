@@ -7,9 +7,22 @@ import json
 from typing import Optional, Dict, Any
 import requests
 
-# Importar nuestros nuevos módulos
-from ai_conversation import ai_manager
-from google_calendar_manager import calendar_manager
+# Importar nuestros nuevos módulos (opcional)
+try:
+    from ai_conversation import ai_manager
+    AI_AVAILABLE = True
+except ImportError:
+    print("⚠️  ADVERTENCIA: ai_conversation no disponible. Usando respuestas de respaldo.")
+    AI_AVAILABLE = False
+    ai_manager = None
+
+try:
+    from google_calendar_manager import calendar_manager
+    CALENDAR_AVAILABLE = True
+except ImportError:
+    print("⚠️  ADVERTENCIA: google_calendar_manager no disponible. Usando sistema simulado.")
+    CALENDAR_AVAILABLE = False
+    calendar_manager = None
 
 # Cargar variables de entorno
 load_dotenv()
@@ -256,9 +269,11 @@ async def process_telnyx_form_webhook(form_data):
         print(f"   CallSid: {call_sid}")
         print(f"   CallerId: {caller_id}")
         
-        # Sistema conversacional con IA (simulado para cuentas trial)
-        # En lugar de Gather, usamos un flujo de conversación simple
-        conversation_response = await ai_manager.generate_ai_conversation_response(call_sid, from_number)
+        # Sistema conversacional con IA
+        if AI_AVAILABLE and ai_manager:
+            conversation_response = await ai_manager.generate_response(from_number)
+        else:
+            conversation_response = await generate_ai_conversation_response(call_sid, from_number)
         
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -475,7 +490,10 @@ async def process_speech(request: Request):
         
         # Sistema conversacional con IA (simulado para cuentas trial)
         # En lugar de Gather, usamos un flujo de conversación simple
-        conversation_response = await ai_manager.generate_ai_conversation_response(call_sid, from_number)
+        if AI_AVAILABLE and ai_manager:
+            conversation_response = await ai_manager.generate_response(from_number)
+        else:
+            conversation_response = await generate_ai_conversation_response(call_sid, from_number)
         
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
