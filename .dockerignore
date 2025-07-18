@@ -20,4 +20,8 @@ coverage.xml
 .git/
 .mypy_cache/
 .pytest_cache/
-.hypothesis/ 
+.hypothesis/
+*.nix
+nixpacks.toml
+railway.toml
+railway.json 
