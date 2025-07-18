@@ -2,7 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "./start.sh"
+startCommand = "python start.py"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
@@ -18,4 +18,4 @@ cmds = ["pip install --break-system-packages -r requirements.txt"]
 cmds = ["echo 'Python build completed'"]
 
 [start]
-cmd = "./start.sh" 
+cmd = "python start.py" 
