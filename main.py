@@ -178,8 +178,24 @@ async def health_check():
 async def telnyx_webhook(request: Request):
     """Webhook para recibir eventos de Telnyx"""
     try:
-        body = await request.json()
-        print(f"📞 Telnyx webhook recibido: {json.dumps(body, indent=2)}")
+        # Obtener el contenido raw del request para debugging
+        raw_body = await request.body()
+        print(f"📞 Raw body recibido: {raw_body}")
+        print(f"📞 Content-Type: {request.headers.get('content-type', 'No content-type')}")
+        
+        # Verificar si el body está vacío
+        if not raw_body:
+            print("❌ Body vacío recibido")
+            return {"status": "error", "message": "Empty body received"}
+        
+        # Intentar parsear JSON
+        try:
+            body = await request.json()
+            print(f"📞 Telnyx webhook recibido: {json.dumps(body, indent=2)}")
+        except json.JSONDecodeError as e:
+            print(f"❌ Error parsing JSON: {e}")
+            print(f"❌ Raw content: {raw_body.decode('utf-8', errors='ignore')}")
+            return {"status": "error", "message": f"Invalid JSON: {str(e)}"}
         
         # Procesar diferentes tipos de eventos de Telnyx
         event_type = body.get("data", {}).get("event_type")
