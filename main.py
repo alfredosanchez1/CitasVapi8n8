@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import json
 from typing import Optional, Dict, Any
 import requests
+from fastapi.responses import Response
 
 # Cargar variables de entorno
 load_dotenv()
@@ -216,8 +217,32 @@ async def telnyx_webhook(request: Request):
             }
             
         else:
-            print(f"❓ Evento desconocido: {event_type}")
-            return {"status": "ignored", "message": f"Unknown event type: {event_type}"}
+            # Para eventos desconocidos o llamadas iniciales, devolver TeXML
+            print(f"❓ Evento desconocido o llamada inicial: {event_type}")
+            
+            # Devolver TeXML para manejar la llamada
+            texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="alice" language="es-MX">
+        Bienvenido al consultorio del Dr. Xavier Xijemez Xifra. 
+        Soy su asistente virtual. ¿En qué puedo ayudarle hoy?
+        
+        Puede decirme si desea:
+        - Agendar una cita
+        - Consultar horarios
+        - Información sobre ubicación
+        - O cualquier otra consulta
+        
+        Por favor, dígame su nombre y el motivo de su consulta.
+    </Say>
+    <Gather input="speech" timeout="10" action="/telnyx-webhook" method="POST">
+        <Say voice="alice" language="es-MX">
+            Estoy escuchando...
+        </Say>
+    </Gather>
+</Response>"""
+            
+            return Response(content=texml_response, media_type="application/xml")
             
     except Exception as e:
         print(f"❌ Error en Telnyx webhook: {e}")
