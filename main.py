@@ -1,12 +1,11 @@
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
 import json
 from typing import Optional, Dict, Any
 import requests
-from fastapi.responses import Response
 
 # Cargar variables de entorno
 load_dotenv()
