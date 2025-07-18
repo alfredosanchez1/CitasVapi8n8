@@ -8,7 +8,7 @@ cmds = ["pip install --break-system-packages -r requirements.txt"]
 cmds = ["echo 'Python build completed with nixpacks.toml'"]
 
 [start]
-cmd = "./start.sh"
+cmd = "python start.py"
 
 [variables]
 NIXPACKS_PYTHON_VERSION = "3.9" 
