@@ -240,19 +240,25 @@ async def process_telnyx_form_webhook(form_data):
         print(f"   CallSid: {call_sid}")
         print(f"   CallerId: {caller_id}")
         
-        # Aquí puedes procesar la llamada según tus necesidades
-        # Por ejemplo, iniciar una llamada con Vapi, grabar, etc.
+        # Devolver TeXML simple para manejar la llamada
+        texml_response = """<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="alice" language="es-MX">
+        Bienvenido al consultorio del Dr. Xavier Xijemez Xifra. 
+        Soy su asistente virtual. ¿En qué puedo ayudarle hoy?
         
-        # Por ahora, simplemente confirmamos que recibimos la llamada
-        return {
-            "status": "success",
-            "message": "Call received and processed",
-            "data": {
-                "from": from_number,
-                "to": to_number,
-                "call_sid": call_sid
-            }
-        }
+        Puede decirme si desea:
+        - Agendar una cita
+        - Consultar horarios
+        - Información sobre ubicación
+        - O cualquier otra consulta
+        
+        Por favor, dígame su nombre y el motivo de su consulta.
+    </Say>
+    <Hangup/>
+</Response>"""
+        
+        return Response(content=texml_response, media_type="application/xml")
         
     except Exception as e:
         print(f"❌ Error procesando form webhook: {e}")
@@ -291,50 +297,6 @@ async def process_telnyx_text_webhook(text_content):
     except Exception as e:
         print(f"❌ Error procesando text webhook: {e}")
         return {"status": "error", "message": str(e)}
-            return {"status": "processed", "message": "Call ended"}
-            
-        elif event_type == "call.speech.gathered":
-            # Speech reconocido
-            speech_text = body.get("data", {}).get("payload", {}).get("speech", "")
-            print(f"🎤 Speech reconocido: {speech_text}")
-            
-            # Aquí procesarías el speech con IA
-            response = await process_speech_with_ai(speech_text)
-            print(f"🤖 Respuesta IA: {response}")
-            
-            return {
-                "status": "processed", 
-                "message": "Speech processed",
-                "response": response
-            }
-            
-        else:
-            # Para eventos desconocidos o llamadas iniciales, devolver TeXML
-            print(f"❓ Evento desconocido o llamada inicial: {event_type}")
-            
-            # Devolver TeXML simple para manejar la llamada
-            texml_response = """<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-    <Say voice="alice" language="es-MX">
-        Bienvenido al consultorio del Dr. Xavier Xijemez Xifra. 
-        Soy su asistente virtual. ¿En qué puedo ayudarle hoy?
-        
-        Puede decirme si desea:
-        - Agendar una cita
-        - Consultar horarios
-        - Información sobre ubicación
-        - O cualquier otra consulta
-        
-        Por favor, dígame su nombre y el motivo de su consulta.
-    </Say>
-    <Hangup/>
-</Response>"""
-            
-            return Response(content=texml_response, media_type="application/xml")
-            
-    except Exception as e:
-        print(f"❌ Error en Telnyx webhook: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
 
 async def process_speech_with_ai(speech_text: str):
     """Procesar speech con IA para citas médicas"""
