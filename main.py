@@ -240,35 +240,37 @@ async def process_telnyx_form_webhook(form_data):
         print(f"   CallSid: {call_sid}")
         print(f"   CallerId: {caller_id}")
         
-        # Usar Telnyx AI para conversación interactiva
-        texml_response = """<?xml version="1.0" encoding="UTF-8"?>
+        # Usar Gather con speech recognition para conversación interactiva
+        texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <AI>
-        <Prompt>
-            Eres una asistente virtual del consultorio médico del Dr. Xavier Xijemez Xifra. 
-            Tu objetivo es ayudar a los pacientes a agendar citas y responder sus consultas.
-            
-            Información del consultorio:
-            - Horarios: Lunes a viernes de 8:00 a 18:00, Sábados de 9:00 a 14:00
-            - Ubicación: [DIRECCIÓN DEL CONSULTORIO]
-            - Para primera consulta: traer documento de identidad, carnet de obra social, estudios previos
-            - Emergencias: acudir al servicio de urgencias más cercano
-            
-            Instrucciones:
-            1. Saluda amablemente al paciente
-            2. Pregunta en qué puedes ayudarle
-            3. Si quiere agendar cita: recopila nombre, teléfono, motivo de consulta
-            4. Si pregunta por horarios, ubicación, etc.: proporciona la información
-            5. Sé profesional pero cálida
-            6. Habla en español mexicano
-            7. Confirma la información antes de terminar la llamada
-        </Prompt>
-        <Voice>alice</Voice>
-        <Language>es-MX</Language>
-        <InterruptionThreshold>0.5</InterruptionThreshold>
-        <PostUtteranceSilence>1000</PostUtteranceSilence>
-        <WebhookUrl>https://tu-railway-app.railway.app/telnyx-ai-webhook</WebhookUrl>
-    </AI>
+    <Say voice="alice" language="es-MX">
+        Bienvenido al consultorio del Dr. Xavier Xijemez Xifra. 
+        Soy su asistente virtual. ¿En qué puedo ayudarle hoy?
+        
+        Puede decirme si desea agendar una cita, consultar horarios, 
+        información sobre ubicación, o cualquier otra consulta.
+        
+        Por favor, dígame su nombre y el motivo de su consulta.
+    </Say>
+    
+    <Gather 
+        input="speech" 
+        timeout="10" 
+        speechTimeout="auto"
+        language="es-MX"
+        action="https://tu-railway-app.railway.app/process-speech?call_sid={call_sid}&from={from_number}"
+        method="POST">
+        
+        <Say voice="alice" language="es-MX">
+            Estoy escuchando...
+        </Say>
+    </Gather>
+    
+    <Say voice="alice" language="es-MX">
+        No pude escuchar su respuesta. Por favor, llame nuevamente.
+    </Say>
+    
+    <Hangup/>
 </Response>"""
         
         return Response(content=texml_response, media_type="application/xml")
@@ -439,6 +441,154 @@ async def process_ai_speech(speech_text: str, webhook_data: Dict[str, Any]):
     except Exception as e:
         print(f"❌ Error procesando AI speech: {e}")
         return {"status": "error", "message": str(e)}
+
+@app.post("/process-speech")
+async def process_speech(request: Request):
+    """Procesar speech reconocido por Telnyx Gather"""
+    try:
+        # Obtener parámetros de la URL
+        call_sid = request.query_params.get("call_sid", "")
+        from_number = request.query_params.get("from", "")
+        
+        # Obtener datos del formulario
+        form_data = await request.form()
+        speech_result = form_data.get("SpeechResult", "")
+        confidence = form_data.get("Confidence", "0")
+        
+        print(f"🎤 Speech procesado:")
+        print(f"   Texto: {speech_result}")
+        print(f"   Confianza: {confidence}")
+        print(f"   CallSid: {call_sid}")
+        print(f"   Desde: {from_number}")
+        
+        # Procesar el speech con lógica de conversación
+        response = await generate_conversation_response(speech_result, call_sid, from_number)
+        
+        # Devolver TeXML con la respuesta
+        texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="alice" language="es-MX">
+        {response}
+    </Say>
+    
+    <Gather 
+        input="speech" 
+        timeout="10" 
+        speechTimeout="auto"
+        language="es-MX"
+        action="https://tu-railway-app.railway.app/process-speech?call_sid={call_sid}&from={from_number}"
+        method="POST">
+        
+        <Say voice="alice" language="es-MX">
+            ¿Hay algo más en lo que pueda ayudarle?
+        </Say>
+    </Gather>
+    
+    <Say voice="alice" language="es-MX">
+        Gracias por llamar al consultorio del Dr. Xavier Xijemez Xifra. 
+        Que tenga un excelente día.
+    </Say>
+    
+    <Hangup/>
+</Response>"""
+        
+        return Response(content=texml_response, media_type="application/xml")
+        
+    except Exception as e:
+        print(f"❌ Error procesando speech: {e}")
+        # Devolver respuesta de error
+        error_response = f"""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="alice" language="es-MX">
+        Lo siento, hubo un error procesando su solicitud. 
+        Por favor, llame nuevamente.
+    </Say>
+    <Hangup/>
+</Response>"""
+        return Response(content=error_response, media_type="application/xml")
+
+async def generate_conversation_response(speech_text: str, call_sid: str, from_number: str):
+    """Generar respuesta conversacional basada en el speech del usuario"""
+    try:
+        speech_lower = speech_text.lower()
+        
+        # Detectar intenciones del usuario
+        if any(word in speech_lower for word in ["cita", "appointment", "agendar", "reservar", "citar"]):
+            return await handle_appointment_request(speech_text, call_sid, from_number)
+            
+        elif any(word in speech_lower for word in ["horarios", "horario", "schedule", "cuándo", "cuando"]):
+            return handle_schedule_inquiry()
+            
+        elif any(word in speech_lower for word in ["ubicación", "dirección", "location", "dónde", "donde"]):
+            return handle_location_inquiry()
+            
+        elif any(word in speech_lower for word in ["preparación", "preparar", "traer", "documentos"]):
+            return handle_preparation_inquiry()
+            
+        elif any(word in speech_lower for word in ["emergencia", "emergencias", "urgencia"]):
+            return handle_emergency_inquiry()
+            
+        else:
+            return handle_general_inquiry(speech_text)
+            
+    except Exception as e:
+        print(f"❌ Error generando respuesta: {e}")
+        return "Lo siento, no pude procesar su solicitud. ¿Podrías repetir?"
+
+async def handle_appointment_request(speech_text: str, call_sid: str, from_number: str):
+    """Manejar solicitud de cita"""
+    print(f"📅 Usuario quiere agendar cita: {speech_text}")
+    
+    # Aquí podrías integrar con OpenAI para extraer información
+    # Por ahora usamos lógica simple
+    
+    if "nombre" in speech_text.lower() and "motivo" in speech_text.lower():
+        return """Perfecto, he tomado nota de su información para la cita. 
+        Un miembro de nuestro equipo se pondrá en contacto con usted 
+        para confirmar los detalles y la fecha disponible. 
+        ¿Hay algo más en lo que pueda ayudarle?"""
+    else:
+        return """Entiendo que quiere agendar una cita. 
+        Para ayudarle mejor, necesito saber su nombre completo 
+        y el motivo de la consulta. ¿Podría proporcionarme esta información?"""
+
+def handle_schedule_inquiry():
+    """Manejar consulta sobre horarios"""
+    return """Nuestros horarios de atención son:
+    Lunes a viernes de 8:00 de la mañana a 6:00 de la tarde.
+    Sábados de 9:00 de la mañana a 2:00 de la tarde.
+    Los domingos no atendemos.
+    ¿En qué horario le gustaría agendar su cita?"""
+
+def handle_location_inquiry():
+    """Manejar consulta sobre ubicación"""
+    return """Nos encontramos ubicados en [DIRECCIÓN DEL CONSULTORIO]. 
+    Contamos con estacionamiento disponible para nuestros pacientes. 
+    ¿Necesita indicaciones para llegar?"""
+
+def handle_preparation_inquiry():
+    """Manejar consulta sobre preparación"""
+    return """Para su primera consulta, por favor traiga:
+    - Documento de identidad
+    - Carnet de obra social si tiene
+    - Estudios previos si los tiene
+    - Lista de medicamentos que toma actualmente"""
+
+def handle_emergency_inquiry():
+    """Manejar consulta sobre emergencias"""
+    return """Para emergencias médicas, por favor acuda inmediatamente 
+    al servicio de urgencias más cercano o llame al 911. 
+    No podemos atender emergencias en el consultorio."""
+
+def handle_general_inquiry(speech_text: str):
+    """Manejar consultas generales"""
+    return f"""Gracias por su consulta. Soy la asistente virtual del 
+    Dr. Xavier Xijemez Xifra. Puedo ayudarle con:
+    - Agendar citas
+    - Consultar horarios
+    - Información sobre ubicación
+    - Preparación para la consulta
+    ¿En cuál de estos temas puedo ayudarle?"""
 
 if __name__ == "__main__":
     import uvicorn
