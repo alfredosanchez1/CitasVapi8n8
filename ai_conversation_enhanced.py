@@ -16,7 +16,12 @@ logger = logging.getLogger(__name__)
 
 class EnhancedAIConversationManager:
     def __init__(self):
-        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        try:
+            self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+            print("✅ Cliente OpenAI inicializado correctamente")
+        except Exception as e:
+            print(f"❌ Error inicializando cliente OpenAI: {e}")
+            self.client = None
         self.conversation_contexts = {}
         
         # Cargar knowledge base y curriculum
@@ -201,6 +206,9 @@ Responde de manera natural y conversacional, como si fuera una conversación rea
     async def _call_openai(self, prompt: str) -> str:
         """Llamar a OpenAI API"""
         try:
+            if not self.client:
+                raise Exception("Cliente OpenAI no inicializado")
+            
             response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
