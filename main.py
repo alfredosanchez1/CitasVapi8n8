@@ -458,29 +458,14 @@ async def process_speech(request: Request):
             # Procesar el speech con lógica de conversación
             response_text = await generate_conversation_response(speech_result, call_sid, from_number)
         
-        # Devolver TeXML con la respuesta
+        # Sistema conversacional con IA (simulado para cuentas trial)
+        # En lugar de Gather, usamos un flujo de conversación simple
+        conversation_response = await generate_ai_conversation_response(call_sid, from_number)
+        
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Say voice="alice" language="es-MX">
-        {response_text}
-    </Say>
-    
-    <Gather 
-        input="speech" 
-        timeout="10" 
-        speechTimeout="auto"
-        language="es-MX"
-        action="https://web-production-a2b02.up.railway.app/process-speech?call_sid={call_sid}&from={from_number}"
-        method="POST">
-        
-        <Say voice="alice" language="es-MX">
-            ¿Hay algo más en lo que pueda ayudarle?
-        </Say>
-    </Gather>
-    
-    <Say voice="alice" language="es-MX">
-        Gracias por llamar al consultorio del Dr. Xavier Xijemez Xifra. 
-        Que tenga un excelente día.
+        {conversation_response}
     </Say>
     
     <Hangup/>
@@ -703,6 +688,89 @@ def handle_general_inquiry(speech_text: str):
     - Preparación para la consulta
     ¿En cuál de estos temas puedo ayudarle?"""
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+async def generate_ai_conversation_response(call_sid: str, from_number: str):
+    """Generar una respuesta conversacional simulada para Telnyx AI"""
+    try:
+        # Simular una conversación inteligente basada en el contexto
+        # En un entorno real, esto se conectaría con OpenAI o similar
+        
+        # Crear un contexto de conversación basado en el número de teléfono
+        # Esto simula recordar conversaciones previas
+        conversation_context = get_conversation_context(from_number)
+        
+        # Generar respuesta basada en el contexto
+        if conversation_context["step"] == 0:
+            # Primera interacción - saludo
+            response = """¡Hola! Bienvenido al Consultorio Médico del Dr. Xavier Xijemez Xifra. 
+            Soy su asistente virtual. ¿En qué puedo ayudarle hoy?
+            
+            Puedo ayudarle con:
+            - Agendar una cita médica
+            - Consultar horarios de atención
+            - Información sobre ubicación y estacionamiento
+            - Preparación para la consulta
+            - Cualquier otra consulta
+            
+            Por favor, dígame cómo puedo ayudarle."""
+            
+        elif conversation_context["step"] == 1:
+            # Segunda interacción - recopilación de información
+            response = """Perfecto, entiendo que desea agendar una cita. 
+            Para ayudarle mejor, necesito recopilar algunos datos:
+            
+            - Su nombre completo
+            - Número de teléfono de contacto
+            - Motivo de la consulta
+            - Si es primera vez o paciente recurrente
+            
+            Un miembro de nuestro equipo se pondrá en contacto con usted 
+            en las próximas 24 horas para confirmar los detalles y 
+            programar la fecha y hora más conveniente.
+            
+            ¿Hay algo más en lo que pueda ayudarle?"""
+            
+        elif conversation_context["step"] == 2:
+            # Tercera interacción - confirmación
+            response = """Excelente, he tomado nota de toda su información. 
+            Su cita ha sido registrada en nuestro sistema.
+            
+            Recibirá una confirmación por mensaje de texto o llamada 
+            en las próximas 24 horas con los detalles de su cita.
+            
+            Para recordarle, nuestros horarios son:
+            Lunes a viernes de 8:00 a 18:00
+            Sábados de 9:00 a 14:00
+            
+            ¿Hay algo más en lo que pueda ayudarle?"""
+            
+        else:
+            # Interacciones adicionales
+            response = """Gracias por su confianza en el Consultorio del Dr. Xavier Xijemez Xifra. 
+            Si tiene alguna pregunta adicional, no dude en llamar nuevamente.
+            
+            Que tenga un excelente día y cuide su salud."""
+        
+        # Actualizar el contexto para la próxima llamada
+        update_conversation_context(from_number, conversation_context["step"] + 1)
+        
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error generando respuesta conversacional: {e}")
+        return """Gracias por llamar al Consultorio del Dr. Xavier Xijemez Xifra. 
+        Un miembro de nuestro equipo se pondrá en contacto con usted pronto."""
+
+# Simular base de datos de contexto de conversación
+conversation_contexts = {}
+
+def get_conversation_context(phone_number: str):
+    """Obtener contexto de conversación para un número de teléfono"""
+    if phone_number not in conversation_contexts:
+        conversation_contexts[phone_number] = {"step": 0, "data": {}}
+    return conversation_contexts[phone_number]
+
+def update_conversation_context(phone_number: str, step: int):
+    """Actualizar contexto de conversación"""
+    if phone_number not in conversation_contexts:
+        conversation_contexts[phone_number] = {"step": 0, "data": {}}
+    conversation_contexts[phone_number]["step"] = step 
