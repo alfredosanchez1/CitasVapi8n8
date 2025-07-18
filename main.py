@@ -240,22 +240,35 @@ async def process_telnyx_form_webhook(form_data):
         print(f"   CallSid: {call_sid}")
         print(f"   CallerId: {caller_id}")
         
-        # Devolver TeXML simple para manejar la llamada
+        # Usar Telnyx AI para conversación interactiva
         texml_response = """<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Say voice="alice" language="es-MX">
-        Bienvenido al consultorio del Dr. Xavier Xijemez Xifra. 
-        Soy su asistente virtual. ¿En qué puedo ayudarle hoy?
-        
-        Puede decirme si desea:
-        - Agendar una cita
-        - Consultar horarios
-        - Información sobre ubicación
-        - O cualquier otra consulta
-        
-        Por favor, dígame su nombre y el motivo de su consulta.
-    </Say>
-    <Hangup/>
+    <AI>
+        <Prompt>
+            Eres una asistente virtual del consultorio médico del Dr. Xavier Xijemez Xifra. 
+            Tu objetivo es ayudar a los pacientes a agendar citas y responder sus consultas.
+            
+            Información del consultorio:
+            - Horarios: Lunes a viernes de 8:00 a 18:00, Sábados de 9:00 a 14:00
+            - Ubicación: [DIRECCIÓN DEL CONSULTORIO]
+            - Para primera consulta: traer documento de identidad, carnet de obra social, estudios previos
+            - Emergencias: acudir al servicio de urgencias más cercano
+            
+            Instrucciones:
+            1. Saluda amablemente al paciente
+            2. Pregunta en qué puedes ayudarle
+            3. Si quiere agendar cita: recopila nombre, teléfono, motivo de consulta
+            4. Si pregunta por horarios, ubicación, etc.: proporciona la información
+            5. Sé profesional pero cálida
+            6. Habla en español mexicano
+            7. Confirma la información antes de terminar la llamada
+        </Prompt>
+        <Voice>alice</Voice>
+        <Language>es-MX</Language>
+        <InterruptionThreshold>0.5</InterruptionThreshold>
+        <PostUtteranceSilence>1000</PostUtteranceSilence>
+        <WebhookUrl>https://tu-railway-app.railway.app/telnyx-ai-webhook</WebhookUrl>
+    </AI>
 </Response>"""
         
         return Response(content=texml_response, media_type="application/xml")
@@ -348,6 +361,84 @@ async def create_telnyx_call(call_request: CallRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/telnyx-ai-webhook")
+async def telnyx_ai_webhook(request: Request):
+    """Webhook para recibir eventos de Telnyx AI"""
+    try:
+        body = await request.json()
+        print(f"🤖 Telnyx AI webhook recibido: {json.dumps(body, indent=2)}")
+        
+        # Procesar diferentes tipos de eventos de Telnyx AI
+        event_type = body.get("event_type")
+        
+        if event_type == "ai.conversation.started":
+            print("🤖 Conversación AI iniciada")
+            return {"status": "processed", "message": "AI conversation started"}
+            
+        elif event_type == "ai.conversation.ended":
+            print("🤖 Conversación AI terminada")
+            return {"status": "processed", "message": "AI conversation ended"}
+            
+        elif event_type == "ai.speech.recognized":
+            # Speech reconocido por la IA
+            speech_text = body.get("payload", {}).get("text", "")
+            print(f"🎤 Speech reconocido: {speech_text}")
+            
+            # Aquí puedes procesar el speech y tomar acciones específicas
+            # Por ejemplo, guardar información de la cita
+            return await process_ai_speech(speech_text, body)
+            
+        elif event_type == "ai.intent.detected":
+            # Intención detectada por la IA
+            intent = body.get("payload", {}).get("intent", "")
+            print(f"🎯 Intención detectada: {intent}")
+            
+            return {"status": "processed", "message": f"Intent detected: {intent}"}
+        
+        return {"status": "ignored", "message": f"Unknown event type: {event_type}"}
+        
+    except Exception as e:
+        print(f"❌ Error en Telnyx AI webhook: {e}")
+        return {"status": "error", "message": str(e)}
+
+async def process_ai_speech(speech_text: str, webhook_data: Dict[str, Any]):
+    """Procesar speech reconocido por Telnyx AI"""
+    try:
+        # Extraer información de la llamada
+        call_sid = webhook_data.get("call_sid", "")
+        from_number = webhook_data.get("from", "")
+        
+        print(f"📝 Procesando speech: '{speech_text}'")
+        print(f"📞 Desde: {from_number}")
+        print(f"🆔 CallSid: {call_sid}")
+        
+        # Aquí puedes implementar lógica específica basada en el contenido del speech
+        # Por ejemplo, detectar si el usuario está agendando una cita
+        
+        if any(word in speech_text.lower() for word in ["cita", "appointment", "agendar", "reservar"]):
+            print("📅 Usuario quiere agendar cita")
+            # Aquí podrías guardar en base de datos o enviar a 8n8
+            
+        elif any(word in speech_text.lower() for word in ["horarios", "horario", "schedule"]):
+            print("🕐 Usuario pregunta por horarios")
+            
+        elif any(word in speech_text.lower() for word in ["ubicación", "dirección", "location"]):
+            print("📍 Usuario pregunta por ubicación")
+        
+        return {
+            "status": "processed",
+            "message": "Speech processed successfully",
+            "data": {
+                "speech": speech_text,
+                "call_sid": call_sid,
+                "from": from_number
+            }
+        }
+        
+    except Exception as e:
+        print(f"❌ Error procesando AI speech: {e}")
+        return {"status": "error", "message": str(e)}
 
 if __name__ == "__main__":
     import uvicorn
