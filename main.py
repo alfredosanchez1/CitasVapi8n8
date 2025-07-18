@@ -240,15 +240,14 @@ async def process_telnyx_form_webhook(form_data):
         print(f"   CallSid: {call_sid}")
         print(f"   CallerId: {caller_id}")
         
-        # Usar Gather con DTMF para conversación interactiva (compatible con trial)
+        # Sistema conversacional con IA (simulado para cuentas trial)
+        # En lugar de Gather, usamos un flujo de conversación simple
+        conversation_response = await generate_ai_conversation_response(call_sid, from_number)
+        
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Say voice="alice" language="es-MX">
-        Bienvenido al consultorio del Dr. Xavier Xijemez Xifra. 
-        Soy su asistente virtual. 
-        
-        Gracias por llamar. Un miembro de nuestro equipo 
-        se pondrá en contacto con usted pronto.
+        {conversation_response}
     </Say>
     
     <Hangup/>
