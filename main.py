@@ -188,32 +188,109 @@ async def telnyx_webhook(request: Request):
             print("❌ Body vacío recibido")
             return {"status": "error", "message": "Empty body received"}
         
-        # Intentar parsear JSON
-        try:
-            body = await request.json()
-            print(f"📞 Telnyx webhook recibido: {json.dumps(body, indent=2)}")
-        except json.JSONDecodeError as e:
-            print(f"❌ Error parsing JSON: {e}")
-            print(f"❌ Raw content: {raw_body.decode('utf-8', errors='ignore')}")
-            return {"status": "error", "message": f"Invalid JSON: {str(e)}"}
+        content_type = request.headers.get('content-type', '').lower()
         
-        # Procesar diferentes tipos de eventos de Telnyx
+        # Manejar diferentes tipos de contenido
+        if 'application/json' in content_type:
+            # Contenido JSON
+            try:
+                body = await request.json()
+                print(f"📞 Telnyx webhook JSON recibido: {json.dumps(body, indent=2)}")
+                return await process_telnyx_json_webhook(body)
+            except json.JSONDecodeError as e:
+                print(f"❌ Error parsing JSON: {e}")
+                return {"status": "error", "message": f"Invalid JSON: {str(e)}"}
+        
+        elif 'application/x-www-form-urlencoded' in content_type:
+            # Contenido form-urlencoded (común en webhooks de telefonía)
+            try:
+                form_data = await request.form()
+                print(f"📞 Telnyx webhook form data recibido: {dict(form_data)}")
+                return await process_telnyx_form_webhook(form_data)
+            except Exception as e:
+                print(f"❌ Error parsing form data: {e}")
+                return {"status": "error", "message": f"Invalid form data: {str(e)}"}
+        
+        else:
+            # Intentar parsear como texto plano
+            try:
+                text_content = raw_body.decode('utf-8')
+                print(f"📞 Telnyx webhook text recibido: {text_content}")
+                return await process_telnyx_text_webhook(text_content)
+            except Exception as e:
+                print(f"❌ Error parsing text content: {e}")
+                return {"status": "error", "message": f"Invalid text content: {str(e)}"}
+        
+    except Exception as e:
+        print(f"❌ Error general en webhook: {e}")
+        return {"status": "error", "message": str(e)}
+
+async def process_telnyx_form_webhook(form_data):
+    """Procesar webhook de Telnyx en formato form-urlencoded"""
+    try:
+        # Extraer información de la llamada
+        from_number = form_data.get('From', '')
+        to_number = form_data.get('To', '')
+        call_sid = form_data.get('CallSid', '')
+        caller_id = form_data.get('CallerId', '')
+        
+        print(f"📱 Llamada recibida:")
+        print(f"   Desde: {from_number}")
+        print(f"   Hacia: {to_number}")
+        print(f"   CallSid: {call_sid}")
+        print(f"   CallerId: {caller_id}")
+        
+        # Aquí puedes procesar la llamada según tus necesidades
+        # Por ejemplo, iniciar una llamada con Vapi, grabar, etc.
+        
+        # Por ahora, simplemente confirmamos que recibimos la llamada
+        return {
+            "status": "success",
+            "message": "Call received and processed",
+            "data": {
+                "from": from_number,
+                "to": to_number,
+                "call_sid": call_sid
+            }
+        }
+        
+    except Exception as e:
+        print(f"❌ Error procesando form webhook: {e}")
+        return {"status": "error", "message": str(e)}
+
+async def process_telnyx_json_webhook(body):
+    """Procesar webhook de Telnyx en formato JSON"""
+    try:
         event_type = body.get("data", {}).get("event_type")
-        print(f"🎯 Evento detectado: {event_type}")
+        print(f"🎯 Evento JSON detectado: {event_type}")
         
         if event_type == "call.initiated":
-            # Llamada iniciada
             print("📱 Llamada iniciada")
             return {"status": "processed", "message": "Call initiated"}
             
         elif event_type == "call.answered":
-            # Llamada contestada
             print("✅ Llamada contestada")
             return {"status": "processed", "message": "Call answered"}
             
         elif event_type == "call.hangup":
-            # Llamada terminada
             print("📴 Llamada terminada")
+            return {"status": "processed", "message": "Call ended"}
+        
+        return {"status": "ignored", "message": f"Unknown event type: {event_type}"}
+        
+    except Exception as e:
+        print(f"❌ Error procesando JSON webhook: {e}")
+        return {"status": "error", "message": str(e)}
+
+async def process_telnyx_text_webhook(text_content):
+    """Procesar webhook de Telnyx en formato texto plano"""
+    try:
+        print(f"📝 Procesando contenido de texto: {text_content}")
+        return {"status": "processed", "message": "Text content processed"}
+        
+    except Exception as e:
+        print(f"❌ Error procesando text webhook: {e}")
+        return {"status": "error", "message": str(e)}
             return {"status": "processed", "message": "Call ended"}
             
         elif event_type == "call.speech.gathered":
