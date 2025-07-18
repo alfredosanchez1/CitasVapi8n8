@@ -16,8 +16,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Expose port (Railway will set the actual port)
-EXPOSE $PORT
-
 # Start the application
 CMD ["python", "start.py"] 
