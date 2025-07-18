@@ -74,7 +74,7 @@ async def telnyx_webhook(request: Request):
                     print(f"🤖 Respuesta AI generada: {conversation_response}")
                 except Exception as e:
                     print(f"❌ Error con AI manager: {e}")
-                    conversation_response = "¡Hola! Bienvenido al Consultorio del Dr. Xavier Xijemez Xifra, especialista en Medicina Interna. Un miembro de nuestro equipo se pondrá en contacto con usted pronto. Gracias por llamar."
+                    conversation_response = "¡Hola! Bienvenido al Consultorio de la Dra. Dolores Remedios del Rincón, especialista en Medicina Interna. Un miembro de nuestro equipo se pondrá en contacto con usted pronto. Gracias por llamar."
                 
                 texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>

@@ -1,5 +1,5 @@
-Dr. Xavier Xijemez Xifra
-MÉDICO ESPECIALISTA EN MEDICINA INTERNA
+Dra. Dolores Remedios del Rincón
+MÉDICA ESPECIALISTA EN MEDICINA INTERNA
 INFORMACIÓN PERSONAL
 Edad: 37 años
 
@@ -73,6 +73,6 @@ Consultorio: [Dirección del consultorio]
 
 Teléfono: [Número de teléfono]
 
-Email: dr.mendoza@consultorio.com
+Email: dra.delrincon@consultorio.com
 
 Horarios: Lunes a Viernes 8:00 - 18:00 hrs, Sábados 9:00 - 14:00 hrs

@@ -16,9 +16,9 @@ R: Estamos ubicados en [DIRECCIÓN COMPLETA]. Contamos con estacionamiento dispo
 
 R: Trabajamos con [LISTAR OBRAS SOCIALES]. También atendemos pacientes particulares. Para verificar su cobertura, puede proporcionarme el nombre de su obra social.
 
-**P: ¿El doctor está disponible para urgencias fuera del horario?**
+**P: ¿La doctora está disponible para urgencias fuera del horario?**
 
-R: Para emergencias médicas, recomendamos acudir inmediatamente al servicio de urgencias más cercano. El doctor no atiende urgencias fuera del horario de consultorio.
+R: Para emergencias médicas, recomendamos acudir inmediatamente al servicio de urgencias más cercano. La doctora no atiende urgencias fuera del horario de consultorio.
 
 ### RESERVA DE CITAS
 
@@ -78,7 +78,7 @@ R: No necesariamente. Puede consultar directamente, aunque si viene derivado por
 
 **P: ¿Atienden pacientes diabéticos?**
 
-R: Sí, el Dr. Dr. Xavier Xijemez Xifra tiene amplia experiencia en el manejo de diabetes y otras enfermedades endocrinas. Ofrecemos seguimiento y educación para el control de la diabetes.
+R: Sí, la Dra. Dolores Remedios del Rincón tiene amplia experiencia en el manejo de diabetes y otras enfermedades endocrinas. Ofrecemos seguimiento y educación para el control de la diabetes.
 
 **P: ¿Hacen control de presión arterial?**
 
@@ -98,9 +98,9 @@ R: No realizamos análisis en el consultorio, pero trabajamos con laboratorios d
 
 R: Los tiempos dependen del tipo de estudio. Los análisis de rutina suelen estar en 24-48 horas. El doctor le explicará los tiempos específicos para cada estudio.
 
-**P: ¿El doctor me explica los resultados?**
+**P: ¿La doctora me explica los resultados?**
 
-R: Sí, el Dr. Xavier Xijemez Xifra revisa todos los resultados con sus pacientes y explica su significado en términos comprensibles.
+R: Sí, la Dra. Dolores Remedios del Rincón revisa todos los resultados con sus pacientes y explica su significado en términos comprensibles.
 
 ### PAGOS Y FACTURACIÓN
 
@@ -122,7 +122,7 @@ R: Sí, entregamos todas las facturas correspondientes tanto para obras sociales
 
 R: La frecuencia depende de su condición específica. El doctor establecerá un plan de seguimiento personalizado durante su consulta.
 
-**P: ¿Puedo contactar al doctor entre consultas?**
+**P: ¿Puedo contactar a la doctora entre consultas?**
 
 R: Para consultas menores puede llamar al consultorio. Para situaciones urgentes, recomendamos la consulta directa o acudir a emergencias.
 
@@ -142,7 +142,7 @@ R: Si presenta síntomas preocupantes, no espere hasta su cita. Llame al consult
 
 **P: ¿Pueden coordinar con otros especialistas?**
 
-R: Sí, el Dr. Xavier Xijemez Xifra puede derivarlo a otros especialistas cuando sea necesario y coordinar su atención integral.
+R: Sí, la Dra. Dolores Remedios del Rincón puede derivarlo a otros especialistas cuando sea necesario y coordinar su atención integral.
 
 ### EMERGENCIAS
 
@@ -150,6 +150,6 @@ R: Sí, el Dr. Xavier Xijemez Xifra puede derivarlo a otros especialistas cuando
 
 R: Para emergencias médicas, acuda inmediatamente al servicio de urgencias más cercano o llame al servicio de emergencias. No espere hasta el horario de consultorio.
 
-**P: ¿El doctor atiende emergencias a domicilio?**
+**P: ¿La doctora atiende emergencias a domicilio?**
 
 R: No ofrecemos atención domiciliaria de emergencias. Para estas situaciones, debe acudir a un servicio de urgencias o llamar a emergencias médicas.

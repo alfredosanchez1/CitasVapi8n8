@@ -24,7 +24,7 @@ class EnhancedAIConversationManager:
         self.doctor_info = self._load_doctor_info()
         
         # Prompt base mejorado para el asistente médico
-        self.base_prompt = f"""Eres una asistente virtual del Consultorio Médico del Dr. Xavier Xijemez Xifra, especialista en Medicina Interna.
+        self.base_prompt = f"""Eres una asistente virtual del Consultorio Médico de la Dra. Dolores Remedios del Rincón, especialista en Medicina Interna.
 
 INFORMACIÓN DEL DOCTOR:
 {self.doctor_info}
@@ -160,7 +160,7 @@ Responde de manera natural y conversacional, como si fuera una conversación rea
         )
         
         try:
-            response = await self._call_openai(prompt + "\n\nGenera un saludo inicial amable y profesional que presente el consultorio del Dr. Xavier Xijemez Xifra y pregunte en qué puede ayudar al paciente.")
+            response = await self._call_openai(prompt + "\n\nGenera un saludo inicial amable y profesional que presente el consultorio de la Dra. Dolores Remedios del Rincón y pregunte en qué puede ayudar al paciente.")
             self.update_conversation_context(phone_number, 1)
             return response
         except Exception as e:
@@ -204,7 +204,7 @@ Responde de manera natural y conversacional, como si fuera una conversación rea
             response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": "Eres una asistente virtual médica profesional, cálida y empática del consultorio del Dr. Xavier Xijemez Xifra. Responde en español mexicano de manera natural."},
+                    {"role": "system", "content": "Eres una asistente virtual médica profesional, cálida y empática del consultorio de la Dra. Dolores Remedios del Rincón. Responde en español mexicano de manera natural."},
                     {"role": "user", "content": prompt}
                 ],
                 max_tokens=400,
@@ -220,10 +220,10 @@ Responde de manera natural y conversacional, como si fuera una conversación rea
     def _get_fallback_response(self, step: int) -> str:
         """Respuesta de respaldo si OpenAI falla"""
         fallback_responses = {
-            0: "¡Hola! Bienvenido al Consultorio del Dr. Xavier Xijemez Xifra, especialista en Medicina Interna. ¿En qué puedo ayudarle hoy?",
+            0: "¡Hola! Bienvenido al Consultorio de la Dra. Dolores Remedios del Rincón, especialista en Medicina Interna. ¿En qué puedo ayudarle hoy?",
             1: "Perfecto, entiendo su consulta. Un miembro de nuestro equipo se pondrá en contacto con usted para brindarle la información que necesita.",
             2: "Excelente, he tomado nota de su información. Recibirá una confirmación de su cita pronto.",
-            3: "Gracias por su confianza en el Dr. Xavier Xijemez Xifra. Que tenga un excelente día."
+            3: "Gracias por su confianza en la Dra. Dolores Remedios del Rincón. Que tenga un excelente día."
         }
         
         return fallback_responses.get(step, "Gracias por llamar al consultorio. Que tenga un excelente día.")
