@@ -446,12 +446,18 @@ async def process_ai_speech(speech_text: str, webhook_data: Dict[str, Any]):
 async def process_speech(request: Request):
     """Procesar speech reconocido por Telnyx Gather"""
     try:
+        print(f"🎤 Procesando speech request...")
+        
         # Obtener parámetros de la URL
         call_sid = request.query_params.get("call_sid", "")
         from_number = request.query_params.get("from", "")
         
+        print(f"📞 Parámetros: call_sid={call_sid}, from={from_number}")
+        
         # Obtener datos del formulario
         form_data = await request.form()
+        print(f"📝 Form data keys: {list(form_data.keys())}")
+        
         speech_result = form_data.get("SpeechResult", "")
         confidence = form_data.get("Confidence", "0")
         
@@ -461,14 +467,21 @@ async def process_speech(request: Request):
         print(f"   CallSid: {call_sid}")
         print(f"   Desde: {from_number}")
         
-        # Procesar el speech con lógica de conversación
-        response = await generate_conversation_response(speech_result, call_sid, from_number)
+        # Si no hay speech, dar una respuesta por defecto
+        if not speech_result:
+            response_text = """No pude escuchar su respuesta claramente. 
+            Por favor, dígame en qué puedo ayudarle: 
+            si desea agendar una cita, consultar horarios, 
+            o información sobre ubicación."""
+        else:
+            # Procesar el speech con lógica de conversación
+            response_text = await generate_conversation_response(speech_result, call_sid, from_number)
         
         # Devolver TeXML con la respuesta
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Say voice="alice" language="es-MX">
-        {response}
+        {response_text}
     </Say>
     
     <Gather 
@@ -492,12 +505,16 @@ async def process_speech(request: Request):
     <Hangup/>
 </Response>"""
         
+        print(f"✅ Respuesta TeXML generada exitosamente")
         return Response(content=texml_response, media_type="application/xml")
         
     except Exception as e:
         print(f"❌ Error procesando speech: {e}")
-        # Devolver respuesta de error
-        error_response = f"""<?xml version="1.0" encoding="UTF-8"?>
+        import traceback
+        print(f"❌ Traceback: {traceback.format_exc()}")
+        
+        # Devolver respuesta de error simple
+        error_response = """<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Say voice="alice" language="es-MX">
         Lo siento, hubo un error procesando su solicitud. 
