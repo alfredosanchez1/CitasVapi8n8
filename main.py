@@ -270,10 +270,14 @@ async def process_telnyx_form_webhook(form_data):
         print(f"   CallerId: {caller_id}")
         
         # Sistema conversacional con IA
-        if AI_AVAILABLE and ai_manager:
-            conversation_response = await ai_manager.generate_response(from_number)
-        else:
-            conversation_response = await generate_ai_conversation_response(call_sid, from_number)
+        try:
+            if AI_AVAILABLE and ai_manager:
+                conversation_response = await ai_manager.generate_response(from_number)
+            else:
+                conversation_response = await generate_ai_conversation_response(call_sid, from_number)
+        except Exception as e:
+            print(f"❌ Error con AI manager: {e}")
+            conversation_response = "¡Hola! Bienvenido al Consultorio del Dr. Xavier Xijemez Xifra. Un miembro de nuestro equipo se pondrá en contacto con usted pronto."
         
         texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
