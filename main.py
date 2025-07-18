@@ -247,30 +247,8 @@ async def process_telnyx_form_webhook(form_data):
         Bienvenido al consultorio del Dr. Xavier Xijemez Xifra. 
         Soy su asistente virtual. 
         
-        Para ayudarle mejor, presione:
-        1 - Para agendar una cita
-        2 - Para consultar horarios
-        3 - Para información sobre ubicación
-        4 - Para información sobre preparación de la consulta
-        5 - Para hablar con un operador
-        
-        Por favor, presione el número correspondiente.
-    </Say>
-    
-    <Gather 
-        input="dtmf" 
-        timeout="10" 
-        numDigits="1"
-        action="https://web-production-a2b02.up.railway.app/process-dtmf?call_sid={call_sid}&from={from_number}"
-        method="POST">
-        
-        <Say voice="alice" language="es-MX">
-            Por favor, presione un número del 1 al 5.
-        </Say>
-    </Gather>
-    
-    <Say voice="alice" language="es-MX">
-        No recibí su selección. Por favor, llame nuevamente.
+        Gracias por llamar. Un miembro de nuestro equipo 
+        se pondrá en contacto con usted pronto.
     </Say>
     
     <Hangup/>
