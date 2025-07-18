@@ -5,7 +5,7 @@ nixPkgs = ["python39", "python39Packages.pip"]
 cmds = ["pip install --break-system-packages -r requirements.txt"]
 
 [phases.build]
-cmds = ["echo 'Python build completed with nixpacks.toml'"]
+cmds = ["echo 'Python build completed with nixpacks.toml - Updated for start.py'"]
 
 [start]
 cmd = "python start.py"
