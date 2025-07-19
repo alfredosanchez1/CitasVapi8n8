@@ -23,8 +23,8 @@ def main():
         logger.info(f"🔧 PORT environment variable: {port}")
         logger.info(f"🐍 Python version: {sys.version}")
         
-        # Importar la aplicación desde main_interactive.py
-        from main_interactive import app
+        # Importar la aplicación desde main_voice_ai.py
+        from main_voice_ai import app
         
         logger.info(f"🌐 Starting uvicorn server on port {port}")
         
