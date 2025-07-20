@@ -126,25 +126,26 @@ async def handle_dtmf_menu(from_number: str, call_sid: str, digits: str):
         return await handle_menu_selection_dtmf(digits, from_number, call_sid)
 
 async def handle_initial_greeting_dtmf(from_number: str, call_sid: str):
-    """Saludo inicial con menú DTMF"""
+    """Saludo inicial con Karla"""
     try:
-        # Intentar usar AI manager si está disponible
-        from ai_conversation_enhanced import enhanced_ai_manager
-        greeting = await enhanced_ai_manager.generate_response(from_number)
-        print(f"🤖 Saludo AI generado: {greeting}")
+        # Usar Karla como asistente virtual
+        from karla_assistant import karla_assistant
+        greeting = await karla_assistant.generate_response(from_number)
+        print(f"🤖 Saludo de Karla generado: {greeting}")
     except Exception as e:
-        print(f"❌ Error con AI manager: {e}")
-        greeting = "¡Hola! Bienvenido al Consultorio de la Dra. Dolores Remedios del Rincón, especialista en Medicina Interna."
+        print(f"❌ Error con Karla: {e}")
+        greeting = "Hola soy Karla, asistente de la doctora Dolores Remedios del Rincón. ¿En qué puedo ayudarte hoy?"
     
     menu_text = f"""
     {greeting}
     
     Por favor, seleccione una opción:
     
-    Presione 1 para agendar una cita
-    Presione 2 para consultar horarios y ubicación
-    Presione 3 para información sobre preparación para consultas
-    Presione 4 para hablar con un miembro del equipo
+    Presione 1 para agendar una cita nueva
+    Presione 2 para cambiar o cancelar una cita existente
+    Presione 3 para consultar horarios y ubicación
+    Presione 4 para información sobre preparación para consultas
+    Presione 5 para hablar con un miembro del equipo
     Presione 0 para finalizar la llamada
     """
     
@@ -167,19 +168,42 @@ async def handle_initial_greeting_dtmf(from_number: str, call_sid: str):
     return Response(content=texml_response, media_type="application/xml")
 
 async def handle_menu_selection_dtmf(digits: str, from_number: str, call_sid: str):
-    """Manejar selección de menú DTMF"""
-    if digits == "1":
-        response = "Para agendar su cita, necesito recopilar algunos datos. Un miembro de nuestro equipo se pondrá en contacto con usted pronto."
-    elif digits == "2":
-        response = "Nuestros horarios son de lunes a viernes de 8:00 a 18:00. Sábados de 9:00 a 14:00. Estamos ubicados en [DIRECCIÓN]."
-    elif digits == "3":
-        response = "Para la primera consulta traiga: documento de identidad, carnet de obra social, estudios médicos previos y lista de medicamentos actuales."
-    elif digits == "4":
-        response = "Un miembro de nuestro equipo se pondrá en contacto con usted pronto. Gracias por su paciencia."
-    elif digits == "0":
-        response = "Gracias por llamar al Consultorio de la Dra. Dolores Remedios del Rincón. Que tenga un excelente día."
-    else:
-        response = "Opción no válida. Un miembro de nuestro equipo se pondrá en contacto con usted pronto."
+    """Manejar selección de menú DTMF con Karla"""
+    try:
+        from karla_assistant import karla_assistant
+        
+        if digits == "1":
+            response = await karla_assistant.generate_response(from_number, "Necesito agendar una cita nueva")
+        elif digits == "2":
+            response = await karla_assistant.generate_response(from_number, "Necesito cambiar o cancelar una cita existente")
+        elif digits == "3":
+            response = await karla_assistant.generate_response(from_number, "Necesito consultar horarios y ubicación")
+        elif digits == "4":
+            response = await karla_assistant.generate_response(from_number, "Necesito información sobre preparación para consultas")
+        elif digits == "5":
+            response = "Un miembro de nuestro equipo se pondrá en contacto con usted pronto. Gracias por su paciencia."
+        elif digits == "0":
+            response = "Gracias por llamar al Consultorio de la Dra. Dolores Remedios del Rincón. Que tenga un excelente día."
+        else:
+            response = "Opción no válida. Un miembro de nuestro equipo se pondrá en contacto con usted pronto."
+            
+    except Exception as e:
+        print(f"❌ Error con Karla en menú: {e}")
+        # Respuestas de fallback
+        if digits == "1":
+            response = "Para agendar su cita, necesito recopilar algunos datos. Un miembro de nuestro equipo se pondrá en contacto con usted pronto."
+        elif digits == "2":
+            response = "Para cambiar o cancelar su cita, un miembro de nuestro equipo se pondrá en contacto con usted pronto."
+        elif digits == "3":
+            response = "Nuestros horarios son de lunes a viernes de 8:00 a 18:00. Sábados de 9:00 a 14:00. Estamos ubicados en [DIRECCIÓN]."
+        elif digits == "4":
+            response = "Para la primera consulta traiga: documento de identidad, carnet de obra social, estudios médicos previos y lista de medicamentos actuales."
+        elif digits == "5":
+            response = "Un miembro de nuestro equipo se pondrá en contacto con usted pronto. Gracias por su paciencia."
+        elif digits == "0":
+            response = "Gracias por llamar al Consultorio de la Dra. Dolores Remedios del Rincón. Que tenga un excelente día."
+        else:
+            response = "Opción no válida. Un miembro de nuestro equipo se pondrá en contacto con usted pronto."
     
     texml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
